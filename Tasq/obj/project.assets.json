@@ -137,6 +137,16 @@
           "bin/placeholder/Contracts.dll": {}
         }
       },
+      "Entities/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v3.1",
+        "compile": {
+          "bin/placeholder/Entities.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Entities.dll": {}
+        }
+      },
       "LoggerService/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v3.1",
@@ -348,6 +358,11 @@
       "path": "../Contracts/Contracts.csproj",
       "msbuildProject": "../Contracts/Contracts.csproj"
     },
+    "Entities/1.0.0": {
+      "type": "project",
+      "path": "../Entities/Entities.csproj",
+      "msbuildProject": "../Entities/Entities.csproj"
+    },
     "LoggerService/1.0.0": {
       "type": "project",
       "path": "../LoggerService/LoggerService.csproj",
@@ -357,6 +372,7 @@
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v3.1": [
       "Contracts >= 1.0.0",
+      "Entities >= 1.0.0",
       "LoggerService >= 1.0.0"
     ]
   },
@@ -393,6 +409,9 @@
           "projectReferences": {
             "C:\\Users\\Hr7iod\\source\\repos\\Tasq\\Contracts\\Contracts.csproj": {
               "projectPath": "C:\\Users\\Hr7iod\\source\\repos\\Tasq\\Contracts\\Contracts.csproj"
+            },
+            "C:\\Users\\Hr7iod\\source\\repos\\Tasq\\Entities\\Entities.csproj": {
+              "projectPath": "C:\\Users\\Hr7iod\\source\\repos\\Tasq\\Entities\\Entities.csproj"
             },
             "C:\\Users\\Hr7iod\\source\\repos\\Tasq\\LoggerService\\LoggerService.csproj": {
               "projectPath": "C:\\Users\\Hr7iod\\source\\repos\\Tasq\\LoggerService\\LoggerService.csproj"
