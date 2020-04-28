@@ -29,19 +29,13 @@ namespace Tasq.Controllers
         [HttpGet]
         public IActionResult GetTasqs()
         {
-            try
-            {
-                var tasqs = _repository.Tasq.GetAllTasqs(trackChanges: false);
 
-                var tasqsDto = _mapper.Map<IEnumerable<TasqDto>>(tasqs);
+            //throw new Exception("ОШИБКА СТОП НОЛЬНОЛЬНОЛЬ");
+            var tasqs = _repository.Tasq.GetAllTasqs(trackChanges: false);
 
-                return Ok(tasqsDto);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Something went wrong in the {nameof(GetTasqs)} action {ex}");
-                return StatusCode(500, "Internal server error");
-            }
+            var tasqsDto = _mapper.Map<IEnumerable<TasqDto>>(tasqs);
+
+            return Ok(tasqsDto);
         }
     }
 }
