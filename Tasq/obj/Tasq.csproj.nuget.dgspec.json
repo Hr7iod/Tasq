@@ -30,7 +30,11 @@
         },
         "frameworks": {
           "netcoreapp3.1": {
-            "projectReferences": {}
+            "projectReferences": {
+              "C:\\Users\\Hr7iod\\source\\repos\\Tasq\\Entities\\Entities.csproj": {
+                "projectPath": "C:\\Users\\Hr7iod\\source\\repos\\Tasq\\Entities\\Entities.csproj"
+              }
+            }
           }
         },
         "warningProperties": {
@@ -302,6 +306,10 @@
       "frameworks": {
         "netcoreapp3.1": {
           "dependencies": {
+            "AutoMapper.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
               "version": "[3.1.3, )"
@@ -311,6 +319,14 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[3.1.3, )"
+            },
+            "Microsoft.Extensions.Logging.Debug": {
+              "target": "Package",
+              "version": "[3.1.0-preview1.19506.1, )"
+            },
+            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
+              "target": "Package",
+              "version": "[3.1.0-preview1-19509-03, )"
             }
           },
           "imports": [

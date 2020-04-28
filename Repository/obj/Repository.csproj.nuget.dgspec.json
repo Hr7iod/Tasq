@@ -30,7 +30,11 @@
         },
         "frameworks": {
           "netcoreapp3.1": {
-            "projectReferences": {}
+            "projectReferences": {
+              "C:\\Users\\Hr7iod\\source\\repos\\Tasq\\Entities\\Entities.csproj": {
+                "projectPath": "C:\\Users\\Hr7iod\\source\\repos\\Tasq\\Entities\\Entities.csproj"
+              }
+            }
           }
         },
         "warningProperties": {

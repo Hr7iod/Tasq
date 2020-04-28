@@ -6,3 +6,6 @@ C:\Users\Hr7iod\source\repos\Tasq\Contracts\obj\Debug\netcoreapp3.1\Contracts.As
 C:\Users\Hr7iod\source\repos\Tasq\Contracts\obj\Debug\netcoreapp3.1\Contracts.AssemblyInfo.cs
 C:\Users\Hr7iod\source\repos\Tasq\Contracts\obj\Debug\netcoreapp3.1\Contracts.dll
 C:\Users\Hr7iod\source\repos\Tasq\Contracts\obj\Debug\netcoreapp3.1\Contracts.pdb
+C:\Users\Hr7iod\source\repos\Tasq\Contracts\bin\Debug\netcoreapp3.1\Entities.dll
+C:\Users\Hr7iod\source\repos\Tasq\Contracts\bin\Debug\netcoreapp3.1\Entities.pdb
+C:\Users\Hr7iod\source\repos\Tasq\Contracts\obj\Debug\netcoreapp3.1\Contracts.csproj.CopyComplete

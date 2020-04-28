@@ -9,3 +9,5 @@ C:\Users\Hr7iod\source\repos\Tasq\LoggerService\bin\Debug\netcoreapp3.1\Contract
 C:\Users\Hr7iod\source\repos\Tasq\LoggerService\obj\Debug\netcoreapp3.1\LoggerService.csproj.CopyComplete
 C:\Users\Hr7iod\source\repos\Tasq\LoggerService\obj\Debug\netcoreapp3.1\LoggerService.dll
 C:\Users\Hr7iod\source\repos\Tasq\LoggerService\obj\Debug\netcoreapp3.1\LoggerService.pdb
+C:\Users\Hr7iod\source\repos\Tasq\LoggerService\bin\Debug\netcoreapp3.1\Entities.dll
+C:\Users\Hr7iod\source\repos\Tasq\LoggerService\bin\Debug\netcoreapp3.1\Entities.pdb
