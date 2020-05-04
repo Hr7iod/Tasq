@@ -11,5 +11,8 @@ namespace Contracts
         Tasq GetTasq(Guid tasqId, bool trackChanges);
         IEnumerable<Tasq> GetChildren(Guid tasqId, bool trachChanges);
         Tasq GetChild(Guid tasqId, Guid childId, bool trackChanges);
+        void CreateTasq(Tasq tasq);
+        void CreateChildTasq(Guid parentId, Tasq tasq);
+        IEnumerable<Tasq> GetByIds(IEnumerable<Guid> ids, bool trackChanges);
     }
 }

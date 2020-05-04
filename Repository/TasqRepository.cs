@@ -31,5 +31,17 @@ namespace Repository
         public Tasq GetChild(Guid mainId, Guid childId, bool trackChanges) =>
             FindByCondition(t => t.ParentId.Equals(mainId) && t.Id.Equals(childId), trackChanges)
             .SingleOrDefault();
+
+        public void CreateTasq(Tasq tasq) => Create(tasq);
+
+        public void CreateChildTasq(Guid parentId, Tasq tasq)
+        {
+            tasq.ParentId = parentId;
+            Create(tasq);
+        }
+
+        public IEnumerable<Tasq> GetByIds(IEnumerable<Guid> ids, bool trackChanges) =>
+            FindByCondition(x => ids.Contains(x.Id), trackChanges)
+            .ToList();
     }
 }

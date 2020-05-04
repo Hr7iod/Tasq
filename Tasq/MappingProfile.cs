@@ -13,6 +13,8 @@ namespace Tasq
         public MappingProfile()
         {
             CreateMap<Entities.Models.Tasq, TasqDto>();
+
+            CreateMap<TasqForCreationDto, Entities.Models.Tasq>();
         }
     }
 }
