@@ -6,6 +6,10 @@ namespace Entities.RequestFeatures
 {
     public class TasqParameters : RequestParameters
     {
+        public TasqParameters()
+        {
+            OrderBy = "name";
+        }
         public uint MinProgress { get; set; }
         public uint MaxProgress { get; set; } = int.MaxValue;
 
