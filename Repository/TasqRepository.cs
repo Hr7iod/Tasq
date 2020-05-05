@@ -1,10 +1,12 @@
 ﻿using Contracts;
 using Entities;
 using Entities.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Repository
 {
@@ -15,22 +17,23 @@ namespace Repository
 
         }
 
-        public IEnumerable<Tasq> GetAllTasqs(bool trackChanges) =>
-            FindAll(trackChanges)
+        public async Task<IEnumerable<Tasq>> GetAllTasqsAsync(bool trackChanges) =>
+            await FindAll(trackChanges)
             .OrderBy(t => t.Name)
-            .ToList();
+            .ToListAsync();
 
-        public Tasq GetTasq(Guid tasqId, bool trackChanges) =>
-            FindByCondition(t => t.Id.Equals(tasqId), trackChanges)
-            .SingleOrDefault();
+        public async Task<Tasq> GetTasqAsync(Guid tasqId, bool trackChanges) =>
+            await FindByCondition(t => t.Id.Equals(tasqId), trackChanges)
+            .SingleOrDefaultAsync();
 
-        public IEnumerable<Tasq> GetChildren(Guid tasqId, bool trackChanges) =>
-            FindByCondition(t => t.ParentId.Equals(tasqId), trackChanges)
-            .OrderBy(t => t.Name);
+        public async Task<IEnumerable<Tasq>> GetChildrenAsync(Guid tasqId, bool trackChanges) =>
+            await FindByCondition(t => t.ParentId.Equals(tasqId), trackChanges)
+            .OrderBy(t => t.Name)
+            .ToListAsync();
 
-        public Tasq GetChild(Guid mainId, Guid childId, bool trackChanges) =>
-            FindByCondition(t => t.ParentId.Equals(mainId) && t.Id.Equals(childId), trackChanges)
-            .SingleOrDefault();
+        public async Task<Tasq> GetChildAsync(Guid mainId, Guid childId, bool trackChanges) =>
+            await FindByCondition(t => t.ParentId.Equals(mainId) && t.Id.Equals(childId), trackChanges)
+            .SingleOrDefaultAsync();
 
         public void CreateTasq(Tasq tasq) => Create(tasq);
 
@@ -40,9 +43,9 @@ namespace Repository
             Create(tasq);
         }
 
-        public IEnumerable<Tasq> GetByIds(IEnumerable<Guid> ids, bool trackChanges) =>
-            FindByCondition(x => ids.Contains(x.Id), trackChanges)
-            .ToList();
+        public async Task<IEnumerable<Tasq>> GetByIdsAsync(IEnumerable<Guid> ids, bool trackChanges) =>
+            await FindByCondition(x => ids.Contains(x.Id), trackChanges)
+            .ToListAsync();
 
         public void DeleteTasq(Tasq tasq)
         {

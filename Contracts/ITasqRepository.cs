@@ -2,18 +2,19 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Contracts
 {
     public interface ITasqRepository
     {
-        IEnumerable<Tasq> GetAllTasqs(bool trackChanges);
-        Tasq GetTasq(Guid tasqId, bool trackChanges);
-        IEnumerable<Tasq> GetChildren(Guid tasqId, bool trachChanges);
-        Tasq GetChild(Guid tasqId, Guid childId, bool trackChanges);
+        Task<IEnumerable<Tasq>> GetAllTasqsAsync(bool trackChanges);
+        Task<Tasq> GetTasqAsync(Guid tasqId, bool trackChanges);
+        Task<IEnumerable<Tasq>> GetChildrenAsync(Guid tasqId, bool trachChanges);
+        Task<Tasq> GetChildAsync(Guid tasqId, Guid childId, bool trackChanges);
         void CreateTasq(Tasq tasq);
         void CreateChildTasq(Guid parentId, Tasq tasq);
-        IEnumerable<Tasq> GetByIds(IEnumerable<Guid> ids, bool trackChanges);
+        Task<IEnumerable<Tasq>> GetByIdsAsync(IEnumerable<Guid> ids, bool trackChanges);
         void DeleteTasq(Tasq tasq);
     }
 }

@@ -29,11 +29,11 @@ namespace Tasq.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetTasqs()
+        public async Task<IActionResult> GetTasqs()
         {
 
             //throw new Exception("ОШИБКА СТОП НОЛЬНОЛЬНОЛЬ");
-            var tasqs = _repository.Tasq.GetAllTasqs(trackChanges: false);
+            var tasqs = await _repository.Tasq.GetAllTasqsAsync(trackChanges: false);
 
             var tasqsDto = _mapper.Map<IEnumerable<TasqDto>>(tasqs);
 
@@ -41,9 +41,9 @@ namespace Tasq.Controllers
         }
 
         [HttpGet("{id}", Name = "TasqById")]
-        public IActionResult GetTasq(Guid id)
+        public async Task<IActionResult> GetTasq(Guid id)
         {
-            var tasq = _repository.Tasq.GetTasq(id, trackChanges: false);
+            var tasq = await _repository.Tasq.GetTasqAsync(id, trackChanges: false);
             if (tasq == null)
             {
                 _logger.LogInfo($"Tasq with id: {id} doesn't exist in the database.");
@@ -57,31 +57,31 @@ namespace Tasq.Controllers
         }
 
         [HttpGet("{tasqId}/children")]
-        public IActionResult GetChildrenForTasq(Guid tasqId)
+        public async Task<IActionResult> GetChildrenForTasq(Guid tasqId)
         {
-            var tasq = _repository.Tasq.GetTasq(tasqId, trackChanges: false);
+            var tasq = await _repository.Tasq.GetTasqAsync(tasqId, trackChanges: false);
             if (tasq == null)
             {
                 _logger.LogInfo($"Tasq with id: {tasqId} doesn't exist in the database.");
                 return NotFound();
             }
 
-            var childrenFromDb = _repository.Tasq.GetChildren(tasqId, trachChanges: false);
+            var childrenFromDb = await _repository.Tasq.GetChildrenAsync(tasqId, trachChanges: false);
             var childrenFromDbDto = _mapper.Map<IEnumerable<TasqDto>>(childrenFromDb);
             return Ok(childrenFromDbDto);
         }
 
         [HttpGet("{tasqId}/children/{childId}", Name = "GetChildTasq")]
-        public IActionResult GetChildForTasq(Guid tasqId, Guid childId)
+        public async Task<IActionResult> GetChildForTasq(Guid tasqId, Guid childId)
         {
-            var tasq = _repository.Tasq.GetTasq(tasqId, trackChanges: false);
+            var tasq = await _repository.Tasq.GetTasqAsync(tasqId, trackChanges: false);
             if (tasq == null)
             {
                 _logger.LogInfo($"Tasq with id: {tasqId} doesn't exist in the database.");
                 return NotFound();
             }
 
-            var childDb = _repository.Tasq.GetChild(tasqId, childId, trackChanges: false);
+            var childDb = await _repository.Tasq.GetChildAsync(tasqId, childId, trackChanges: false);
             if (childDb == null)
             {
                 _logger.LogInfo($"Tasq with id: {childId} doesn't exist in the database.");
@@ -93,7 +93,7 @@ namespace Tasq.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateTasq([FromBody]TasqForCreationDto tasq)
+        public async Task<IActionResult> CreateTasq([FromBody]TasqForCreationDto tasq)
         {
             if (tasq == null)
             {
@@ -110,7 +110,7 @@ namespace Tasq.Controllers
             var tasqEntity = _mapper.Map<Entities.Models.Tasq>(tasq);
 
             _repository.Tasq.CreateTasq(tasqEntity);
-            _repository.Save();
+            await _repository.SaveAsync();
 
             var tasqToReturn = _mapper.Map<TasqDto>(tasqEntity);
 
@@ -118,7 +118,7 @@ namespace Tasq.Controllers
         }
 
         [HttpPost("{tasqId}/children")]
-        public IActionResult CreateChildTasq(Guid tasqId, [FromBody]TasqForCreationDto childTasq)
+        public async Task<IActionResult> CreateChildTasq(Guid tasqId, [FromBody]TasqForCreationDto childTasq)
         {
             if (childTasq == null)
             {
@@ -126,7 +126,7 @@ namespace Tasq.Controllers
                 return BadRequest("TasqForCreationDto object is null");
             }
 
-            var parentTasq = _repository.Tasq.GetTasq(tasqId, trackChanges: false);
+            var parentTasq = await _repository.Tasq.GetTasqAsync(tasqId, trackChanges: false);
             if (parentTasq == null)
             {
                 _logger.LogInfo($"Parent tasq with id {tasqId} doesn't exist in the database.");
@@ -142,7 +142,7 @@ namespace Tasq.Controllers
             var tasqEntity = _mapper.Map<Entities.Models.Tasq>(childTasq);
 
             _repository.Tasq.CreateChildTasq(tasqId, tasqEntity);
-            _repository.Save();
+            await _repository.SaveAsync();
 
             var tasqToReturn = _mapper.Map<TasqDto>(tasqEntity);
 
@@ -150,7 +150,7 @@ namespace Tasq.Controllers
         }
 
         [HttpGet("collection/({ids})", Name = "TasqCollection")]
-        public IActionResult GetTasqCollection([ModelBinder(BinderType = typeof(ArrayModelBinder))]IEnumerable<Guid> ids)
+        public async Task<IActionResult> GetTasqCollection([ModelBinder(BinderType = typeof(ArrayModelBinder))]IEnumerable<Guid> ids)
         {
             if (ids == null)
             {
@@ -158,7 +158,7 @@ namespace Tasq.Controllers
                 return BadRequest("Parameter ids is null");
             }
 
-            var tasqEntities = _repository.Tasq.GetByIds(ids, trackChanges: false);
+            var tasqEntities = await _repository.Tasq.GetByIdsAsync(ids, trackChanges: false);
 
             if (ids.Count() != tasqEntities.Count())
             {
@@ -171,7 +171,7 @@ namespace Tasq.Controllers
         }
 
         [HttpPost("collection")]
-        public IActionResult CreateTasqCollection([FromBody]IEnumerable<TasqForCreationDto> tasqCollection)
+        public async Task<IActionResult> CreateTasqCollection([FromBody]IEnumerable<TasqForCreationDto> tasqCollection)
         {
             if (tasqCollection == null)
             {
@@ -191,7 +191,7 @@ namespace Tasq.Controllers
                 return UnprocessableEntity(ModelState);
             }
 
-            _repository.Save();
+           await _repository.SaveAsync();
 
             var tasqCollectionToReturn = _mapper.Map<IEnumerable<TasqDto>>(tasqEntities);
             var ids = string.Join(",", tasqCollectionToReturn.Select(t => t.Id));
@@ -200,16 +200,16 @@ namespace Tasq.Controllers
         }
 
         [HttpDelete("{tasqId}/children/{childId}")]
-        public IActionResult DeleteChildTasq(Guid tasqId, Guid childId)
+        public async Task<IActionResult> DeleteChildTasq(Guid tasqId, Guid childId)
         {
-            var tasq = _repository.Tasq.GetTasq(tasqId, trackChanges: false);
+            var tasq = await _repository.Tasq.GetTasqAsync(tasqId, trackChanges: false);
             if (tasq == null)
             {
                 _logger.LogInfo($"Tasq with id: {tasqId} doesn't exist in the database.");
                 return NotFound();
             }
 
-            var tasqChild = _repository.Tasq.GetChild(tasqId, childId, trackChanges: false);
+            var tasqChild = await _repository.Tasq.GetChildAsync(tasqId, childId, trackChanges: false);
             if (tasqChild == null)
             {
                 _logger.LogInfo($"Tasq with id: {childId} doesn't exist in the database.");
@@ -217,35 +217,35 @@ namespace Tasq.Controllers
             }
 
             _repository.Tasq.DeleteTasq(tasqChild);
-            _repository.Save();
+            await _repository.SaveAsync();
 
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteTasq(Guid id)
+        public async Task<IActionResult> DeleteTasq(Guid id)
         {
-            var tasq = _repository.Tasq.GetTasq(id, trackChanges: false);
+            var tasq = await _repository.Tasq.GetTasqAsync(id, trackChanges: false);
             if(tasq == null)
             {
                 _logger.LogInfo($"Tasq with id: {id} doesn't exist in the database.");
                 return NotFound();
             }
 
-            var tasqChildren = _repository.Tasq.GetChildren(id, trachChanges: false);
+            var tasqChildren = await _repository.Tasq.GetChildrenAsync(id, trachChanges: false);
             foreach(var tasqChild in tasqChildren)
             {
                 _repository.Tasq.DeleteTasq(tasqChild);
             }
 
             _repository.Tasq.DeleteTasq(tasq);
-            _repository.Save();
+            await _repository.SaveAsync();
 
             return NoContent();
         }
 
         [HttpPut("{parentId}/children/{id}")]
-        public IActionResult UpdateChildTasq(Guid parentId, Guid id, [FromBody]TasqForUpdateDto tasq)
+        public async Task<IActionResult> UpdateChildTasq(Guid parentId, Guid id, [FromBody]TasqForUpdateDto tasq)
         {
             if (tasq == null)
             {
@@ -259,7 +259,7 @@ namespace Tasq.Controllers
                 return UnprocessableEntity(ModelState);
             }
 
-            var parentTasq = _repository.Tasq.GetTasq(parentId, trackChanges: false);
+            var parentTasq = await _repository.Tasq.GetTasqAsync(parentId, trackChanges: false);
             if(parentTasq == null)
             {
                 _logger.LogInfo($"Parent Tasq with id: {parentId} doesn't exist in the database.");
@@ -267,7 +267,7 @@ namespace Tasq.Controllers
             }
 
 
-            var tasqEntity = _repository.Tasq.GetChild(parentId, id, trackChanges: true);
+            var tasqEntity = await _repository.Tasq.GetChildAsync(parentId, id, trackChanges: true);
             if (tasqEntity == null)
             {
                 _logger.LogInfo($"Tasq with id: {id} doesn't exist in the database.");
@@ -275,13 +275,13 @@ namespace Tasq.Controllers
             }
 
             _mapper.Map(tasq, tasqEntity);
-            _repository.Save();
+            await _repository.SaveAsync();
 
             return NoContent();
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateTasq(Guid id, [FromBody]TasqForUpdateDto tasq)
+        public async Task<IActionResult> UpdateTasq(Guid id, [FromBody]TasqForUpdateDto tasq)
         {
             if(tasq == null)
             {
@@ -295,7 +295,7 @@ namespace Tasq.Controllers
                 return UnprocessableEntity(ModelState);
             }
 
-            var tasqEntity = _repository.Tasq.GetTasq(id, trackChanges: true);
+            var tasqEntity = await _repository.Tasq.GetTasqAsync(id, trackChanges: true);
             if(tasqEntity == null)
             {
                 _logger.LogInfo($"Tasq with id: {id} doesn't exist in the database.");
@@ -303,13 +303,13 @@ namespace Tasq.Controllers
             }
 
             _mapper.Map(tasq, tasqEntity);
-            _repository.Save();
+            await _repository.SaveAsync();
 
             return NoContent();
         }
 
         [HttpPatch("{parentId}/children/{id}")]
-        public IActionResult PartiallyUpdateChildTasq(Guid parentId, Guid id, [FromBody]JsonPatchDocument<TasqForUpdateDto> patchDoc)
+        public async Task<IActionResult> PartiallyUpdateChildTasq(Guid parentId, Guid id, [FromBody]JsonPatchDocument<TasqForUpdateDto> patchDoc)
         {
             if(patchDoc == null)
             {
@@ -317,14 +317,14 @@ namespace Tasq.Controllers
                 return BadRequest("patchDoc object is null");
             }
 
-            var parentTasq = _repository.Tasq.GetTasq(parentId, trackChanges: false);
+            var parentTasq = await _repository.Tasq.GetTasqAsync(parentId, trackChanges: false);
             if(parentTasq == null)
             {
                 _logger.LogInfo($"Parent tasq with id: {parentId} doesn't exist in the database.");
                 return NotFound();
             }
 
-            var tasqEntity = _repository.Tasq.GetChild(parentId, id, trackChanges: true);
+            var tasqEntity = await _repository.Tasq.GetChildAsync(parentId, id, trackChanges: true);
             if(tasqEntity == null)
             {
                 _logger.LogInfo($"Tasq with id: {id} doesn't exist in the database.");
@@ -343,13 +343,13 @@ namespace Tasq.Controllers
             }
 
             _mapper.Map(tasqToPatch, tasqEntity);
-            _repository.Save();
+            await _repository.SaveAsync();
 
             return NoContent();
         }
 
         [HttpPatch("{id}")]
-        public IActionResult PatriallyUpdateTasq(Guid id, [FromBody]JsonPatchDocument<TasqForUpdateDto> patchDoc)
+        public async Task<IActionResult> PatriallyUpdateTasq(Guid id, [FromBody]JsonPatchDocument<TasqForUpdateDto> patchDoc)
         {
             if(patchDoc == null)
             {
@@ -357,7 +357,7 @@ namespace Tasq.Controllers
                 return BadRequest("patchDoc object is null");
             }
 
-            var tasqEntity = _repository.Tasq.GetTasq(id, trackChanges: true);
+            var tasqEntity = await _repository.Tasq.GetTasqAsync(id, trackChanges: true);
             if (tasqEntity == null)
             {
                 _logger.LogInfo($"Tasq with id: {id} doesn't exist in the database.");
@@ -376,7 +376,7 @@ namespace Tasq.Controllers
             }
 
             _mapper.Map(tasqToPatch, tasqEntity);
-            _repository.Save();
+            await _repository.SaveAsync();
 
             return NoContent();
         }
