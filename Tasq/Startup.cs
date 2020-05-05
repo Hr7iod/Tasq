@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NLog;
+using Tasq.ActionFilters;
 using Tasq.Extensions;
 
 namespace Tasq
@@ -37,6 +38,8 @@ namespace Tasq
             services.ConfigureSqlContext(Configuration);
             services.ConfigureRepositoryManager();
             services.AddAutoMapper(typeof(Startup));
+            services.AddScoped<ValidationFilterAttribute>();
+            services.AddScoped<ValidateTasqExistsAttribute>();
 
             services.Configure<ApiBehaviorOptions>(options =>
             {
