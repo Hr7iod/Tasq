@@ -14,5 +14,6 @@ namespace Contracts
         void CreateTasq(Tasq tasq);
         void CreateChildTasq(Guid parentId, Tasq tasq);
         IEnumerable<Tasq> GetByIds(IEnumerable<Guid> ids, bool trackChanges);
+        void DeleteTasq(Tasq tasq);
     }
 }

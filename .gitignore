@@ -1,9 +1,8 @@
-.vs
+.vs/
 /Tasq/obj/
 /Tasq/bin/
 /Tasq/internal_logs/
 /Tasq/logs/
-/Tasq/Migrations/
 /Contracts/bin/
 /Contracts/obj/
 /Entities/bin/

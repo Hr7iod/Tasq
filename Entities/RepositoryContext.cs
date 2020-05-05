@@ -17,6 +17,11 @@ namespace Entities
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new TasqConfiguration());
+
+            /*modelBuilder.Entity<Tasq>()
+                .HasOne(t => t.Parent)
+                .WithMany(t => t.Children)
+                .OnDelete(DeleteBehavior.Cascade);*/
         }
 
         public DbSet<Tasq> Tasqs { get; set; }

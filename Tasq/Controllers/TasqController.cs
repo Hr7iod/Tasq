@@ -113,14 +113,14 @@ namespace Tasq.Controllers
         [HttpPost("{tasqId}/children")]
         public IActionResult CreateChildTasq(Guid tasqId, [FromBody]TasqForCreationDto childTasq)
         {
-            if(childTasq == null)
+            if (childTasq == null)
             {
                 _logger.LogError("TasqForCreationDto object sent from client is null.");
                 return BadRequest("TasqForCreationDto object is null");
             }
 
             var parentTasq = _repository.Tasq.GetTasq(tasqId, trackChanges: false);
-            if(parentTasq == null)
+            if (parentTasq == null)
             {
                 _logger.LogInfo($"Parent tasq with id {tasqId} doesn't exist in the database.");
                 return NotFound();
@@ -139,7 +139,7 @@ namespace Tasq.Controllers
         [HttpGet("collection/({ids})", Name = "TasqCollection")]
         public IActionResult GetTasqCollection([ModelBinder(BinderType = typeof(ArrayModelBinder))]IEnumerable<Guid> ids)
         {
-            if(ids == null)
+            if (ids == null)
             {
                 _logger.LogError("Parameter ids is null");
                 return BadRequest("Parameter ids is null");
@@ -147,7 +147,7 @@ namespace Tasq.Controllers
 
             var tasqEntities = _repository.Tasq.GetByIds(ids, trackChanges: false);
 
-            if(ids.Count() != tasqEntities.Count())
+            if (ids.Count() != tasqEntities.Count())
             {
                 _logger.LogError("Some ids are not valid in a collection");
                 return NotFound();
@@ -160,7 +160,7 @@ namespace Tasq.Controllers
         [HttpPost("collection")]
         public IActionResult CreateTasqCollection([FromBody]IEnumerable<TasqForCreationDto> tasqCollection)
         {
-            if(tasqCollection == null)
+            if (tasqCollection == null)
             {
                 _logger.LogError("Tasq collection sent from client is null.");
                 return BadRequest("Tasq collection is null");
@@ -180,7 +180,50 @@ namespace Tasq.Controllers
             return CreatedAtRoute("TasqCollection", new { ids }, tasqCollectionToReturn);
         }
 
-        
+        [HttpDelete("{tasqId}/children/{childId}")]
+        public IActionResult DeleteChildTasq(Guid tasqId, Guid childId)
+        {
+            var tasq = _repository.Tasq.GetTasq(tasqId, trackChanges: false);
+            if (tasq == null)
+            {
+                _logger.LogInfo($"Tasq with id: {tasqId} doesn't exist in the database.");
+                return NotFound();
+            }
+
+            var tasqChild = _repository.Tasq.GetChild(tasqId, childId, trackChanges: false);
+            if (tasqChild == null)
+            {
+                _logger.LogInfo($"Tasq with id: {childId} doesn't exist in the database.");
+                return NotFound();
+            }
+
+            _repository.Tasq.DeleteTasq(tasqChild);
+            _repository.Save();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteTasq(Guid id)
+        {
+            var tasq = _repository.Tasq.GetTasq(id, trackChanges: false);
+            if(tasq == null)
+            {
+                _logger.LogInfo($"Tasq with id: {id} doesn't exist in the database.");
+                return NotFound();
+            }
+
+            var tasqChildren = _repository.Tasq.GetChildren(id, trachChanges: false);
+            foreach(var tasqChild in tasqChildren)
+            {
+                _repository.Tasq.DeleteTasq(tasqChild);
+            }
+
+            _repository.Tasq.DeleteTasq(tasq);
+            _repository.Save();
+
+            return NoContent();
+        }
 
     }
 }

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Tasq.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20200428103943_ChildrenName")]
-    partial class ChildrenName
+    [Migration("20200504170403_InitialData")]
+    partial class InitialData
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -43,6 +43,38 @@ namespace Tasq.Migrations
                     b.HasIndex("ParentId");
 
                     b.ToTable("Tasqs");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("be8eecad-96a0-4eba-9ba2-14dd7a88f5d9"),
+                            Description = "Проверка дескрипшена",
+                            Name = "Первая тестовая таска"
+                        },
+                        new
+                        {
+                            Id = new Guid("3b6b5db1-45ca-460c-9bca-725d2d3a6747"),
+                            Name = "Вторая тестовая таска"
+                        },
+                        new
+                        {
+                            Id = new Guid("d917bd64-22ee-4942-bd7c-dc5ef2132d23"),
+                            Name = "Вторая тестовая ПОДтаска",
+                            ParentId = new Guid("3b6b5db1-45ca-460c-9bca-725d2d3a6747")
+                        },
+                        new
+                        {
+                            Id = new Guid("1c21f4b6-b7e5-45d8-a3da-5fb19dcab145"),
+                            Description = "Проверка подПОДдескрипшена",
+                            Name = "Вторая тестовая ПОДПОДтаска",
+                            ParentId = new Guid("d917bd64-22ee-4942-bd7c-dc5ef2132d23")
+                        },
+                        new
+                        {
+                            Id = new Guid("e7df029a-ff87-4ff8-89ab-d22d8ac3ce29"),
+                            Description = "Проверка третий раз дескрипшена",
+                            Name = "Третья тестовая таска"
+                        });
                 });
 
             modelBuilder.Entity("Entities.Models.Tasq", b =>

@@ -43,5 +43,10 @@ namespace Repository
         public IEnumerable<Tasq> GetByIds(IEnumerable<Guid> ids, bool trackChanges) =>
             FindByCondition(x => ids.Contains(x.Id), trackChanges)
             .ToList();
+
+        public void DeleteTasq(Tasq tasq)
+        {
+            Delete(tasq);
+        }
     }
 }

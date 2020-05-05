@@ -19,6 +19,7 @@ namespace Entities.Models
         public ICollection<Tasq> Children { get; set; }
 
         [ForeignKey(nameof(Tasq))]
+        //[Required(ErrorMessage = "ParentId is required field. Set NULL to make root tasq.")]
         public Guid? ParentId { get; set; }
         public Tasq Parent { get; set; }
     }
