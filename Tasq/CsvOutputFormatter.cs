@@ -51,7 +51,7 @@ namespace Tasq
 
         private static void FormatCsv(StringBuilder buffer, TasqDto tasq)
         {
-            buffer.AppendLine($"{tasq.Id},\"{tasq.Name}\",\"{tasq.Description}\",{tasq.ParentId}");
+            buffer.AppendLine($"{tasq.Id},\"{tasq.Name}\",\"{tasq.Description}\",{tasq.Progress},{tasq.ParentId}");
         }
     }
 }

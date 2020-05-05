@@ -16,6 +16,10 @@ namespace Entities.Models
 
         public string Description { get; set; }
 
+        [MinLength(0, ErrorMessage = "Percent completed can't be less than 0")]
+        [MaxLength(100, ErrorMessage = "Percent completed can't be greater than 100")]
+        public int Progress { get; set; }
+
         public ICollection<Tasq> Children { get; set; }
 
         [ForeignKey(nameof(Tasq))]

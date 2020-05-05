@@ -130,7 +130,7 @@ namespace Tasq.Controllers
         }
 
         [HttpGet("collection/({ids})", Name = "TasqCollection")]
-        public async Task<IActionResult> GetTasqCollection([ModelBinder(BinderType = typeof(ArrayModelBinder))]IEnumerable<Guid> ids, [FromQuery]TasqParameters tasqParameters)
+        public async Task<IActionResult> GetTasqCollection([ModelBinder(BinderType = typeof(ArrayModelBinder))]IEnumerable<Guid> ids)
         {
             if (ids == null)
             {

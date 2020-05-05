@@ -10,6 +10,10 @@ namespace Entities.DataTransferObjects
         [Required(ErrorMessage = "Name is a required field.")]
         public string Name { get; set; }
         public string Description { get; set; }
+
+        [Range(0, 100, ErrorMessage = "Percent completed can't be less than 0 or greater than 100")]
+        public int Progress { get; set; }
+
         public Guid? ParentId { get; set; }
 
         public IEnumerable<TasqForCreationDto> Children { get; set; }
