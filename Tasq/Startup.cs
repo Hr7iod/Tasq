@@ -40,6 +40,7 @@ namespace Tasq
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<ValidationFilterAttribute>();
             services.AddScoped<ValidateTasqExistsAttribute>();
+            services.AddScoped<ValidateChildTasqExistsAttribute>();
 
             services.Configure<ApiBehaviorOptions>(options =>
             {
