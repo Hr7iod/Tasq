@@ -1,8 +1,0 @@
-C:\Users\Hr7iod\source\repos\Tasq\Entities\bin\Debug\netcoreapp3.1\Entities.deps.json
-C:\Users\Hr7iod\source\repos\Tasq\Entities\bin\Debug\netcoreapp3.1\Entities.dll
-C:\Users\Hr7iod\source\repos\Tasq\Entities\obj\Debug\netcoreapp3.1\Entities.csprojAssemblyReference.cache
-C:\Users\Hr7iod\source\repos\Tasq\Entities\obj\Debug\netcoreapp3.1\Entities.AssemblyInfoInputs.cache
-C:\Users\Hr7iod\source\repos\Tasq\Entities\obj\Debug\netcoreapp3.1\Entities.AssemblyInfo.cs
-C:\Users\Hr7iod\source\repos\Tasq\Entities\bin\Debug\netcoreapp3.1\Entities.pdb
-C:\Users\Hr7iod\source\repos\Tasq\Entities\obj\Debug\netcoreapp3.1\Entities.dll
-C:\Users\Hr7iod\source\repos\Tasq\Entities\obj\Debug\netcoreapp3.1\Entities.pdb
