@@ -101,6 +101,12 @@ namespace Tasq.Controllers
                 return BadRequest("TasqFroCrationDto object is null");
             }
 
+            if(!ModelState.IsValid)
+            {
+                _logger.LogError("Invalid model state for the TasqForCreationDto object");
+                return UnprocessableEntity(ModelState);
+            }
+
             var tasqEntity = _mapper.Map<Entities.Models.Tasq>(tasq);
 
             _repository.Tasq.CreateTasq(tasqEntity);
@@ -125,6 +131,12 @@ namespace Tasq.Controllers
             {
                 _logger.LogInfo($"Parent tasq with id {tasqId} doesn't exist in the database.");
                 return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError("Invalid model state for the TasqForCreationDto object");
+                return UnprocessableEntity(ModelState);
             }
 
             var tasqEntity = _mapper.Map<Entities.Models.Tasq>(childTasq);
@@ -171,6 +183,12 @@ namespace Tasq.Controllers
             foreach (var tasq in tasqEntities)
             {
                 _repository.Tasq.CreateTasq(tasq);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError("Invalid model state for the IEnumerable<TasqForCreationDto> object");
+                return UnprocessableEntity(ModelState);
             }
 
             _repository.Save();
@@ -235,12 +253,19 @@ namespace Tasq.Controllers
                 return BadRequest("Tasq object is null");
             }
 
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError("Invalid model state for the TasqForUpdateDto object");
+                return UnprocessableEntity(ModelState);
+            }
+
             var parentTasq = _repository.Tasq.GetTasq(parentId, trackChanges: false);
             if(parentTasq == null)
             {
                 _logger.LogInfo($"Parent Tasq with id: {parentId} doesn't exist in the database.");
                 return NotFound();
             }
+
 
             var tasqEntity = _repository.Tasq.GetChild(parentId, id, trackChanges: true);
             if (tasqEntity == null)
@@ -262,6 +287,12 @@ namespace Tasq.Controllers
             {
                 _logger.LogError("TasqForUpdateDto object sent from client is null.");
                 return BadRequest("TasqForUpdateDto object is null");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError("Invalid model state for the TasqForUpdateDto object");
+                return UnprocessableEntity(ModelState);
             }
 
             var tasqEntity = _repository.Tasq.GetTasq(id, trackChanges: true);
@@ -301,7 +332,16 @@ namespace Tasq.Controllers
             }
 
             var tasqToPatch = _mapper.Map<TasqForUpdateDto>(tasqEntity);
-            patchDoc.ApplyTo(tasqToPatch);
+            patchDoc.ApplyTo(tasqToPatch, ModelState);
+
+            TryValidateModel(tasqToPatch);
+
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError("Invalid model state for the TasqForUpdateDto object");
+                return UnprocessableEntity(ModelState);
+            }
+
             _mapper.Map(tasqToPatch, tasqEntity);
             _repository.Save();
 
@@ -325,7 +365,16 @@ namespace Tasq.Controllers
             }
 
             var tasqToPatch = _mapper.Map<TasqForUpdateDto>(tasqEntity);
-            patchDoc.ApplyTo(tasqToPatch);
+            patchDoc.ApplyTo(tasqToPatch, ModelState);
+
+            TryValidateModel(tasqToPatch);
+
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError("Invalid model state for the TasqForUpdateDto object");
+                return UnprocessableEntity(ModelState);
+            }
+
             _mapper.Map(tasqToPatch, tasqEntity);
             _repository.Save();
 
