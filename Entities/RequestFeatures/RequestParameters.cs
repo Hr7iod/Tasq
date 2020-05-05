@@ -23,8 +23,4 @@ namespace Entities.RequestFeatures
         }
     }
 
-    public class TasqParameters : RequestParameters
-    {
-
-    }
 }

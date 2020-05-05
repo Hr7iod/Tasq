@@ -20,7 +20,7 @@ namespace Repository
 
         public async Task<PagedList<Tasq>> GetAllTasqsAsync(TasqParameters tasqParameters, bool trackChanges)
         {
-            var tasqs = await FindAll(trackChanges)
+            var tasqs = await FindByCondition(t => t.Progress >= tasqParameters.MinProgress && t.Progress <= tasqParameters.MaxProgress, trackChanges)
             .OrderBy(t => t.Name)
             .ToListAsync();
 
@@ -33,7 +33,7 @@ namespace Repository
 
         public async Task<PagedList<Tasq>> GetChildrenAsync(Guid tasqId, TasqParameters tasqParameters, bool trackChanges)
         {
-            var children = await FindByCondition(t => t.ParentId.Equals(tasqId), trackChanges)
+            var children = await FindByCondition(t => t.ParentId.Equals(tasqId) && (t.Progress >= tasqParameters.MinProgress && t.Progress <= tasqParameters.MaxProgress), trackChanges)
                 .OrderBy(t => t.Name)
                 .ToListAsync();
 

@@ -34,7 +34,8 @@ namespace Tasq.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTasqs([FromQuery]TasqParameters tasqParameters)
         {
-
+            if (!tasqParameters.ValidProgressRange)
+                return BadRequest("Max progress can't be less than min progress.");
             //throw new Exception("ОШИБКА СТОП НОЛЬНОЛЬНОЛЬ");
             var tasqs = await _repository.Tasq.GetAllTasqsAsync(tasqParameters, trackChanges: false);
 
@@ -64,6 +65,9 @@ namespace Tasq.Controllers
         [HttpGet("{tasqId}/children")]
         public async Task<IActionResult> GetChildrenForTasq(Guid tasqId, [FromQuery]TasqParameters tasqParameters)
         {
+            if (!tasqParameters.ValidProgressRange)
+                return BadRequest("Max progress can't be less than min progress.");
+
             var tasq = await _repository.Tasq.GetTasqAsync(tasqId, trackChanges: false);
             if (tasq == null)
             {
