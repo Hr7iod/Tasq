@@ -225,5 +225,56 @@ namespace Tasq.Controllers
             return NoContent();
         }
 
+        [HttpPut("{parentId}/children/{id}")]
+        public IActionResult UpdateChildTasq(Guid parentId, Guid id, [FromBody]TasqForUpdateDto tasq)
+        {
+            if (tasq == null)
+            {
+                _logger.LogError("Tasq object sent from client is null.");
+                return BadRequest("Tasq object is null");
+            }
+
+            var parentTasq = _repository.Tasq.GetTasq(parentId, trackChanges: false);
+            if(parentTasq == null)
+            {
+                _logger.LogInfo($"Parent Tasq with id: {parentId} doesn't exist in the database.");
+                return NotFound();
+            }
+
+            var tasqEntity = _repository.Tasq.GetChild(parentId, id, trackChanges: true);
+            if (tasqEntity == null)
+            {
+                _logger.LogInfo($"Tasq with id: {id} doesn't exist in the database.");
+                return NotFound();
+            }
+
+            _mapper.Map(tasq, tasqEntity);
+            _repository.Save();
+
+            return NoContent();
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult UpdateTasq(Guid id, [FromBody]TasqForUpdateDto tasq)
+        {
+            if(tasq == null)
+            {
+                _logger.LogError("TasqForUpdateDto object sent from client is null.");
+                return BadRequest("TasqForUpdateDto object is null");
+            }
+
+            var tasqEntity = _repository.Tasq.GetTasq(id, trackChanges: true);
+            if(tasqEntity == null)
+            {
+                _logger.LogInfo($"Tasq with id: {id} doesn't exist in the database.");
+                return NotFound();
+            }
+
+            _mapper.Map(tasq, tasqEntity);
+            _repository.Save();
+
+            return NoContent();
+        }
+
     }
 }
