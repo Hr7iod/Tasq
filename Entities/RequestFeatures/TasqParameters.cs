@@ -10,5 +10,7 @@ namespace Entities.RequestFeatures
         public uint MaxProgress { get; set; } = int.MaxValue;
 
         public bool ValidProgressRange => MaxProgress > MinProgress;
+
+        public string SearchName { get; set; }
     }
 }

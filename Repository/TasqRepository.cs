@@ -2,6 +2,7 @@
 using Entities;
 using Entities.Models;
 using Entities.RequestFeatures;
+using Repository.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,9 @@ namespace Repository
 
         public async Task<PagedList<Tasq>> GetAllTasqsAsync(TasqParameters tasqParameters, bool trackChanges)
         {
-            var tasqs = await FindByCondition(t => t.Progress >= tasqParameters.MinProgress && t.Progress <= tasqParameters.MaxProgress, trackChanges)
+            var tasqs = await FindAll(trackChanges)
+            .FilterTasq(tasqParameters.MinProgress, tasqParameters.MaxProgress)
+            .SearchName(tasqParameters.SearchName)
             .OrderBy(t => t.Name)
             .ToListAsync();
 
@@ -33,7 +36,9 @@ namespace Repository
 
         public async Task<PagedList<Tasq>> GetChildrenAsync(Guid tasqId, TasqParameters tasqParameters, bool trackChanges)
         {
-            var children = await FindByCondition(t => t.ParentId.Equals(tasqId) && (t.Progress >= tasqParameters.MinProgress && t.Progress <= tasqParameters.MaxProgress), trackChanges)
+            var children = await FindByCondition(t => t.ParentId.Equals(tasqId), trackChanges)
+                .FilterTasq(tasqParameters.MinProgress, tasqParameters.MaxProgress)
+                .SearchName(tasqParameters.SearchName)
                 .OrderBy(t => t.Name)
                 .ToListAsync();
 
