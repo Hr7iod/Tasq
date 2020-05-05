@@ -1,6 +1,7 @@
 ﻿using Contracts;
 using Entities;
 using Entities.Models;
+using Entities.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -17,19 +18,28 @@ namespace Repository
 
         }
 
-        public async Task<IEnumerable<Tasq>> GetAllTasqsAsync(bool trackChanges) =>
-            await FindAll(trackChanges)
+        public async Task<PagedList<Tasq>> GetAllTasqsAsync(TasqParameters tasqParameters, bool trackChanges)
+        {
+            var tasqs = await FindAll(trackChanges)
             .OrderBy(t => t.Name)
             .ToListAsync();
+
+            return PagedList<Tasq>.ToPagedList(tasqs, tasqParameters.PageNumber, tasqParameters.PageSize);
+        }
 
         public async Task<Tasq> GetTasqAsync(Guid tasqId, bool trackChanges) =>
             await FindByCondition(t => t.Id.Equals(tasqId), trackChanges)
             .SingleOrDefaultAsync();
 
-        public async Task<IEnumerable<Tasq>> GetChildrenAsync(Guid tasqId, bool trackChanges) =>
-            await FindByCondition(t => t.ParentId.Equals(tasqId), trackChanges)
-            .OrderBy(t => t.Name)
-            .ToListAsync();
+        public async Task<PagedList<Tasq>> GetChildrenAsync(Guid tasqId, TasqParameters tasqParameters, bool trackChanges)
+        {
+            var children = await FindByCondition(t => t.ParentId.Equals(tasqId), trackChanges)
+                .OrderBy(t => t.Name)
+                .ToListAsync();
+
+            return PagedList<Tasq>
+                .ToPagedList(children, tasqParameters.PageNumber, tasqParameters.PageSize);
+        }
 
         public async Task<Tasq> GetChildAsync(Guid mainId, Guid childId, bool trackChanges) =>
             await FindByCondition(t => t.ParentId.Equals(mainId) && t.Id.Equals(childId), trackChanges)

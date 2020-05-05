@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Contracts;
 using Entities.DataTransferObjects;
+using Entities.RequestFeatures;
 using LoggerService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Tasq.ActionFilters;
 using Tasq.ModelBinders;
 
@@ -30,11 +32,13 @@ namespace Tasq.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetTasqs()
+        public async Task<IActionResult> GetTasqs([FromQuery]TasqParameters tasqParameters)
         {
 
             //throw new Exception("ОШИБКА СТОП НОЛЬНОЛЬНОЛЬ");
-            var tasqs = await _repository.Tasq.GetAllTasqsAsync(trackChanges: false);
+            var tasqs = await _repository.Tasq.GetAllTasqsAsync(tasqParameters, trackChanges: false);
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(tasqs.MetaData));
 
             var tasqsDto = _mapper.Map<IEnumerable<TasqDto>>(tasqs);
 
@@ -58,7 +62,7 @@ namespace Tasq.Controllers
         }
 
         [HttpGet("{tasqId}/children")]
-        public async Task<IActionResult> GetChildrenForTasq(Guid tasqId)
+        public async Task<IActionResult> GetChildrenForTasq(Guid tasqId, [FromQuery]TasqParameters tasqParameters)
         {
             var tasq = await _repository.Tasq.GetTasqAsync(tasqId, trackChanges: false);
             if (tasq == null)
@@ -67,7 +71,10 @@ namespace Tasq.Controllers
                 return NotFound();
             }
 
-            var childrenFromDb = await _repository.Tasq.GetChildrenAsync(tasqId, trachChanges: false);
+            var childrenFromDb = await _repository.Tasq.GetChildrenAsync(tasqId, tasqParameters, trackChanges: false);
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(childrenFromDb.MetaData));
+            
             var childrenFromDbDto = _mapper.Map<IEnumerable<TasqDto>>(childrenFromDb);
             return Ok(childrenFromDbDto);
         }
@@ -123,7 +130,7 @@ namespace Tasq.Controllers
         }
 
         [HttpGet("collection/({ids})", Name = "TasqCollection")]
-        public async Task<IActionResult> GetTasqCollection([ModelBinder(BinderType = typeof(ArrayModelBinder))]IEnumerable<Guid> ids)
+        public async Task<IActionResult> GetTasqCollection([ModelBinder(BinderType = typeof(ArrayModelBinder))]IEnumerable<Guid> ids, [FromQuery]TasqParameters tasqParameters)
         {
             if (ids == null)
             {
@@ -179,7 +186,7 @@ namespace Tasq.Controllers
         {
             var tasq = HttpContext.Items["tasq"] as Entities.Models.Tasq;
 
-            var tasqChildren = await _repository.Tasq.GetChildrenAsync(id, trachChanges: false);
+            var tasqChildren = await _repository.Tasq.GetChildrenAsync(id, new TasqParameters(), trackChanges: false);
             foreach(var tasqChild in tasqChildren)
             {
                 _repository.Tasq.DeleteTasq(tasqChild);
