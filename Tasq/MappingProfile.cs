@@ -16,7 +16,7 @@ namespace Tasq
 
             CreateMap<TasqForCreationDto, Entities.Models.Tasq>();
 
-            CreateMap<TasqForUpdateDto, Entities.Models.Tasq>();
+            CreateMap<TasqForUpdateDto, Entities.Models.Tasq>().ReverseMap();
 
         }
     }

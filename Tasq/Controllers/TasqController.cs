@@ -7,6 +7,7 @@ using Contracts;
 using Entities.DataTransferObjects;
 using LoggerService;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Tasq.ModelBinders;
 
@@ -276,5 +277,59 @@ namespace Tasq.Controllers
             return NoContent();
         }
 
+        [HttpPatch("{parentId}/children/{id}")]
+        public IActionResult PartiallyUpdateChildTasq(Guid parentId, Guid id, [FromBody]JsonPatchDocument<TasqForUpdateDto> patchDoc)
+        {
+            if(patchDoc == null)
+            {
+                _logger.LogError("patchDoc object sent from client is null.");
+                return BadRequest("patchDoc object is null");
+            }
+
+            var parentTasq = _repository.Tasq.GetTasq(parentId, trackChanges: false);
+            if(parentTasq == null)
+            {
+                _logger.LogInfo($"Parent tasq with id: {parentId} doesn't exist in the database.");
+                return NotFound();
+            }
+
+            var tasqEntity = _repository.Tasq.GetChild(parentId, id, trackChanges: true);
+            if(tasqEntity == null)
+            {
+                _logger.LogInfo($"Tasq with id: {id} doesn't exist in the database.");
+                return NotFound();
+            }
+
+            var tasqToPatch = _mapper.Map<TasqForUpdateDto>(tasqEntity);
+            patchDoc.ApplyTo(tasqToPatch);
+            _mapper.Map(tasqToPatch, tasqEntity);
+            _repository.Save();
+
+            return NoContent();
+        }
+
+        [HttpPatch("{id}")]
+        public IActionResult PatriallyUpdateTasq(Guid id, [FromBody]JsonPatchDocument<TasqForUpdateDto> patchDoc)
+        {
+            if(patchDoc == null)
+            {
+                _logger.LogError("patchDoc object sent from client is null.");
+                return BadRequest("patchDoc object is null");
+            }
+
+            var tasqEntity = _repository.Tasq.GetTasq(id, trackChanges: true);
+            if (tasqEntity == null)
+            {
+                _logger.LogInfo($"Tasq with id: {id} doesn't exist in the database.");
+                return NotFound();
+            }
+
+            var tasqToPatch = _mapper.Map<TasqForUpdateDto>(tasqEntity);
+            patchDoc.ApplyTo(tasqToPatch);
+            _mapper.Map(tasqToPatch, tasqEntity);
+            _repository.Save();
+
+            return NoContent();
+        }
     }
 }
