@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Contracts;
+using Entities.DataTransferObjects;
 using LoggerService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NLog;
+using Repository.DataShaping;
 using Tasq.ActionFilters;
 using Tasq.Extensions;
 
@@ -41,6 +44,7 @@ namespace Tasq
             services.AddScoped<ValidationFilterAttribute>();
             services.AddScoped<ValidateTasqExistsAttribute>();
             services.AddScoped<ValidateChildTasqExistsAttribute>();
+            services.AddScoped<IDataShaper<TasqDto>, DataShaper<TasqDto>>();
 
             services.Configure<ApiBehaviorOptions>(options =>
             {

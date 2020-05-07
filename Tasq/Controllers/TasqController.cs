@@ -23,12 +23,14 @@ namespace Tasq.Controllers
         private readonly IRepositoryManager _repository;
         private readonly ILoggerManager _logger;
         private readonly IMapper _mapper;
+        private readonly IDataShaper<TasqDto> _dataShaper;
 
-        public TasqController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
+        public TasqController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper, IDataShaper<TasqDto> dataShaper)
         {
             _repository = repository;
             _logger = logger;
             _mapper = mapper;
+            _dataShaper = dataShaper;
         }
 
         [HttpGet]
@@ -43,11 +45,11 @@ namespace Tasq.Controllers
 
             var tasqsDto = _mapper.Map<IEnumerable<TasqDto>>(tasqs);
 
-            return Ok(tasqsDto);
+            return Ok(_dataShaper.ShapeData(tasqsDto, tasqParameters.Fields));
         }
 
         [HttpGet("{id}", Name = "TasqById")]
-        public async Task<IActionResult> GetTasq(Guid id)
+        public async Task<IActionResult> GetTasq(Guid id, [FromQuery]TasqParameters tasqParameters)
         {
             var tasq = await _repository.Tasq.GetTasqAsync(id, trackChanges: false);
             if (tasq == null)
@@ -58,7 +60,7 @@ namespace Tasq.Controllers
             else
             {
                 var tasqDto = _mapper.Map<TasqDto>(tasq);
-                return Ok(tasqDto);
+                return Ok(_dataShaper.ShapeData(tasqDto, tasqParameters.Fields));
             }
         }
 
@@ -80,11 +82,11 @@ namespace Tasq.Controllers
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(childrenFromDb.MetaData));
             
             var childrenFromDbDto = _mapper.Map<IEnumerable<TasqDto>>(childrenFromDb);
-            return Ok(childrenFromDbDto);
+            return Ok(_dataShaper.ShapeData(childrenFromDbDto, tasqParameters.Fields));
         }
 
         [HttpGet("{tasqId}/children/{childId}", Name = "GetChildTasq")]
-        public async Task<IActionResult> GetChildForTasq(Guid tasqId, Guid childId)
+        public async Task<IActionResult> GetChildForTasq(Guid tasqId, Guid childId, [FromQuery]TasqParameters tasqParameters)
         {
             var tasq = await _repository.Tasq.GetTasqAsync(tasqId, trackChanges: false);
             if (tasq == null)
@@ -101,7 +103,7 @@ namespace Tasq.Controllers
             }
 
             var child = _mapper.Map<TasqDto>(childDb);
-            return Ok(child);
+            return Ok(_dataShaper.ShapeData(child, tasqParameters.Fields));
         }
 
         [HttpPost]
