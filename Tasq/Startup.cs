@@ -19,6 +19,7 @@ using NLog;
 using Repository.DataShaping;
 using Tasq.ActionFilters;
 using Tasq.Extensions;
+using Tasq.Utility;
 
 namespace Tasq
 {
@@ -45,6 +46,9 @@ namespace Tasq
             services.AddScoped<ValidateTasqExistsAttribute>();
             services.AddScoped<ValidateChildTasqExistsAttribute>();
             services.AddScoped<IDataShaper<TasqDto>, DataShaper<TasqDto>>();
+            services.AddScoped<ValidateMediaTypeAttribute>();
+            services.AddScoped<TasqLinks>();
+            services.AddScoped<ChildTasqLinks>();
 
             services.Configure<ApiBehaviorOptions>(options =>
             {
@@ -58,6 +62,7 @@ namespace Tasq
             }).AddNewtonsoftJson()
             .AddXmlDataContractSerializerFormatters()
             .AddCustomCSVFormatter();
+            services.AddCustomMediaTypes();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

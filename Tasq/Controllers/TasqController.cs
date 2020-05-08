@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Tasq.ActionFilters;
 using Tasq.ModelBinders;
+using Tasq.Utility;
 
 namespace Tasq.Controllers
 {
@@ -23,17 +24,20 @@ namespace Tasq.Controllers
         private readonly IRepositoryManager _repository;
         private readonly ILoggerManager _logger;
         private readonly IMapper _mapper;
-        private readonly IDataShaper<TasqDto> _dataShaper;
+        private readonly ChildTasqLinks _childTasqLinks;
+        private readonly TasqLinks _tasqLinks;
 
-        public TasqController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper, IDataShaper<TasqDto> dataShaper)
+        public TasqController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper, ChildTasqLinks childTasqLinks, TasqLinks tasqLinks)
         {
             _repository = repository;
             _logger = logger;
             _mapper = mapper;
-            _dataShaper = dataShaper;
+            _childTasqLinks = childTasqLinks;
+            _tasqLinks = tasqLinks;
         }
 
         [HttpGet]
+        [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
         public async Task<IActionResult> GetTasqs([FromQuery]TasqParameters tasqParameters)
         {
             if (!tasqParameters.ValidProgressRange)
@@ -45,11 +49,14 @@ namespace Tasq.Controllers
 
             var tasqsDto = _mapper.Map<IEnumerable<TasqDto>>(tasqs);
 
-            return Ok(_dataShaper.ShapeData(tasqsDto, tasqParameters.Fields));
+            var links = _tasqLinks.TryGenerateLinks(tasqsDto, tasqParameters.Fields, HttpContext);
+
+            return links.HasLinks ? Ok(links.LinkedEntities) : Ok(links.ShapedEntities);
         }
 
-        [HttpGet("{id}", Name = "TasqById")]
-        public async Task<IActionResult> GetTasq(Guid id, [FromQuery]TasqParameters tasqParameters)
+        [HttpGet("{id}", Name = "GetTasq")]
+        [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
+        public async Task<IActionResult> GetTasq(Guid id)
         {
             var tasq = await _repository.Tasq.GetTasqAsync(id, trackChanges: false);
             if (tasq == null)
@@ -60,11 +67,12 @@ namespace Tasq.Controllers
             else
             {
                 var tasqDto = _mapper.Map<TasqDto>(tasq);
-                return Ok(_dataShaper.ShapeData(tasqDto, tasqParameters.Fields));
+                return Ok(tasqDto);
             }
         }
 
         [HttpGet("{tasqId}/children")]
+        [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
         public async Task<IActionResult> GetChildrenForTasq(Guid tasqId, [FromQuery]TasqParameters tasqParameters)
         {
             if (!tasqParameters.ValidProgressRange)
@@ -82,11 +90,15 @@ namespace Tasq.Controllers
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(childrenFromDb.MetaData));
             
             var childrenFromDbDto = _mapper.Map<IEnumerable<TasqDto>>(childrenFromDb);
-            return Ok(_dataShaper.ShapeData(childrenFromDbDto, tasqParameters.Fields));
+
+            var links = _childTasqLinks.TryGenerateLinks(childrenFromDbDto, tasqParameters.Fields, tasqId, HttpContext);
+
+            return links.HasLinks ? Ok(links.LinkedEntities) : Ok(links.ShapedEntities);
         }
 
-        [HttpGet("{tasqId}/children/{childId}", Name = "GetChildTasq")]
-        public async Task<IActionResult> GetChildForTasq(Guid tasqId, Guid childId, [FromQuery]TasqParameters tasqParameters)
+        [HttpGet("{tasqId}/children/{childId}", Name = "GetChildForTasq")]
+        [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
+        public async Task<IActionResult> GetChildForTasq(Guid tasqId, Guid childId)
         {
             var tasq = await _repository.Tasq.GetTasqAsync(tasqId, trackChanges: false);
             if (tasq == null)
@@ -103,7 +115,7 @@ namespace Tasq.Controllers
             }
 
             var child = _mapper.Map<TasqDto>(childDb);
-            return Ok(_dataShaper.ShapeData(child, tasqParameters.Fields));
+            return Ok(child);
         }
 
         [HttpPost]
@@ -117,7 +129,7 @@ namespace Tasq.Controllers
 
             var tasqToReturn = _mapper.Map<TasqDto>(tasqEntity);
 
-            return CreatedAtRoute("TasqById", new { id = tasqToReturn.Id }, tasqToReturn);
+            return CreatedAtRoute("GetTasq", new { id = tasqToReturn.Id }, tasqToReturn);
         }
 
         [HttpPost("{tasqId}/children")]
@@ -132,7 +144,7 @@ namespace Tasq.Controllers
 
             var tasqToReturn = _mapper.Map<TasqDto>(tasqEntity);
 
-            return CreatedAtRoute("GetChildTasq", new { tasqId, childId = tasqToReturn.Id }, tasqToReturn);
+            return CreatedAtRoute("GetChildForTasq", new { tasqId, childId = tasqToReturn.Id }, tasqToReturn);
         }
 
         [HttpGet("collection/({ids})", Name = "TasqCollection")]
