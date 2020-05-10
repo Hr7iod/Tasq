@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Contracts;
 using Entities.DataTransferObjects;
+using Entities.Models;
 
 namespace Tasq
 {
@@ -17,6 +18,8 @@ namespace Tasq
             CreateMap<TasqForCreationDto, Entities.Models.Tasq>();
 
             CreateMap<TasqForUpdateDto, Entities.Models.Tasq>().ReverseMap();
+
+            CreateMap<UserForRegistrationDto, User>();
 
         }
     }

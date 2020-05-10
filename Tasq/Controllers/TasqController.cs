@@ -8,6 +8,7 @@ using Entities.DataTransferObjects;
 using Entities.RequestFeatures;
 using LoggerService;
 using Marvin.Cache.Headers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -38,7 +39,7 @@ namespace Tasq.Controllers
             _tasqLinks = tasqLinks;
         }
 
-        [HttpGet(Name = "GetTasqs")]
+        [HttpGet(Name = "GetTasqs"), Authorize(Roles = "Manager")]
         [HttpHead]
         [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
         public async Task<IActionResult> GetTasqs([FromQuery]TasqParameters tasqParameters)
