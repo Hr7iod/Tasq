@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCoreRateLimit;
 using AutoMapper;
 using Contracts;
 using Entities.DataTransferObjects;
@@ -54,6 +55,9 @@ namespace Tasq
             services.ConfigureHttpCacheHeaders();
             services.AddMemoryCache();
 
+            services.ConfigureRateLimitinOptions();
+            services.AddHttpContextAccessor();
+
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
@@ -94,6 +98,8 @@ namespace Tasq
             app.UseResponseCaching();
 
             app.UseHttpCacheHeaders();
+
+            app.UseIpRateLimiting();
 
             app.UseRouting();
 
