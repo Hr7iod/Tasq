@@ -12,6 +12,6 @@ namespace Entities.RequestFeatures
         public int TotalCount { get; set; }
 
         public bool HasPrevious => CurrentPage > 1;
-        public bool HasNex => CurrentPage < TotalPages;
+        public bool HasNext => CurrentPage < TotalPages;
     }
 }

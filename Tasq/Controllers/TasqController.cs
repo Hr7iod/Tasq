@@ -37,6 +37,7 @@ namespace Tasq.Controllers
         }
 
         [HttpGet]
+        [HttpHead]
         [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
         public async Task<IActionResult> GetTasqs([FromQuery]TasqParameters tasqParameters)
         {
@@ -72,6 +73,7 @@ namespace Tasq.Controllers
         }
 
         [HttpGet("{tasqId}/children")]
+        [HttpHead("{tasqId}/children")]
         [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
         public async Task<IActionResult> GetChildrenForTasq(Guid tasqId, [FromQuery]TasqParameters tasqParameters)
         {
@@ -287,6 +289,15 @@ namespace Tasq.Controllers
             await _repository.SaveAsync();
 
             return NoContent();
+        }
+
+
+        [HttpOptions]
+        public IActionResult GetTasqsOptions()
+        {
+            Response.Headers.Add("Allow", "GET, OPTIONS, POST");
+
+            return Ok();
         }
     }
 }
