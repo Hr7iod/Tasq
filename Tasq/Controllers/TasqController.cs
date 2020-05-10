@@ -7,6 +7,7 @@ using Contracts;
 using Entities.DataTransferObjects;
 using Entities.RequestFeatures;
 using LoggerService;
+using Marvin.Cache.Headers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +20,7 @@ namespace Tasq.Controllers
 {
     [Route("api/tasqs")]
     [ApiController]
+    //[ResponseCache(CacheProfileName = "120SecondsDuration")] //marvin cache headers library provide that
     public class TasqController : ControllerBase
     {
         private readonly IRepositoryManager _repository;
@@ -56,6 +58,8 @@ namespace Tasq.Controllers
         }
 
         [HttpGet("{id}", Name = "GetTasq")]
+        [HttpCacheExpiration(CacheLocation = CacheLocation.Public, MaxAge = 60)]
+        [HttpCacheValidation(MustRevalidate = false)]
         [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
         public async Task<IActionResult> GetTasq(Guid id)
         {
@@ -210,6 +214,7 @@ namespace Tasq.Controllers
             foreach(var tasqChild in tasqChildren)
             {
                 _repository.Tasq.DeleteTasq(tasqChild);
+                await _repository.SaveAsync();
             }
 
             _repository.Tasq.DeleteTasq(tasq);
@@ -286,7 +291,7 @@ namespace Tasq.Controllers
             }
 
             _mapper.Map(tasqToPatch, tasqEntity);
-            await _repository.SaveAsync();
+            await _repository.SaveAsync(); // Почему-то не работает
 
             return NoContent();
         }
