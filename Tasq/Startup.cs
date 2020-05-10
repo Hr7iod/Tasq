@@ -49,6 +49,7 @@ namespace Tasq
             services.AddScoped<ValidateMediaTypeAttribute>();
             services.AddScoped<TasqLinks>();
             services.AddScoped<ChildTasqLinks>();
+            services.ConfigureVersioning();
 
             services.Configure<ApiBehaviorOptions>(options =>
             {
