@@ -36,7 +36,7 @@ namespace Tasq.Controllers
             _tasqLinks = tasqLinks;
         }
 
-        [HttpGet]
+        [HttpGet(Name = "GetTasqs")]
         [HttpHead]
         [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
         public async Task<IActionResult> GetTasqs([FromQuery]TasqParameters tasqParameters)
@@ -120,7 +120,7 @@ namespace Tasq.Controllers
             return Ok(child);
         }
 
-        [HttpPost]
+        [HttpPost(Name = "CreateTasq")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateTasq([FromBody]TasqForCreationDto tasq)
         {

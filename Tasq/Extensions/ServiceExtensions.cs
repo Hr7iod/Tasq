@@ -55,6 +55,7 @@ namespace Tasq.Extensions
                 if (newtonsoftJsonOutputFormatter != null)
                 {
                     newtonsoftJsonOutputFormatter.SupportedMediaTypes.Add("application/vnd.tasq.hateoas+json");
+                    newtonsoftJsonOutputFormatter.SupportedMediaTypes.Add("application/vnd.tasq.apiroot+json");
                 }
 
                 var xmlOutputFormatter = config.OutputFormatters.OfType<XmlDataContractSerializerOutputFormatter>()?.FirstOrDefault();
@@ -62,6 +63,7 @@ namespace Tasq.Extensions
                 if (xmlOutputFormatter != null)
                 {
                     xmlOutputFormatter.SupportedMediaTypes.Add("application/vnd.tasq.hateoas+xml");
+                    xmlOutputFormatter.SupportedMediaTypes.Add("application/vnd.tasq.apiroot+xml");
                 }
             });
         }
