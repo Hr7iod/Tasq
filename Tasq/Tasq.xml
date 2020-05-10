@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Tasq</name>
+    </assembly>
+    <members>
+        <member name="M:Tasq.Controllers.TasqController.GetTasqs(Entities.RequestFeatures.TasqParameters)">
+            <summary>
+            Gets the list of all tasqs
+            </summary>
+            <returns>The tasqs list</returns>
+        </member>
+        <member name="M:Tasq.Controllers.TasqController.CreateTasq(Entities.DataTransferObjects.TasqForCreationDto)">
+            <summary>
+            Creates a newly created tasq
+            </summary>
+            <param name="tasq"></param>
+            <returns>A newly created tasq</returns>
+            <response code="201">Returns the newly created item</response>
+            <response code="400">If the item is null</response>
+            <response code="422">If the model is invalid</response>
+        </member>
+    </members>
+</doc>

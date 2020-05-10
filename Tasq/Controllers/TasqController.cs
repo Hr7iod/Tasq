@@ -21,6 +21,7 @@ namespace Tasq.Controllers
 {
     [Route("api/tasqs")]
     [ApiController]
+    [ApiExplorerSettings(GroupName = "v1")]
     //[ResponseCache(CacheProfileName = "120SecondsDuration")] //marvin cache headers library provide that
     public class TasqController : ControllerBase
     {
@@ -39,6 +40,10 @@ namespace Tasq.Controllers
             _tasqLinks = tasqLinks;
         }
 
+        /// <summary>
+        /// Gets the list of all tasqs
+        /// </summary>
+        /// <returns>The tasqs list</returns>
         [HttpGet(Name = "GetTasqs"), Authorize(Roles = "Manager")]
         [HttpHead]
         [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
@@ -125,6 +130,14 @@ namespace Tasq.Controllers
             return Ok(child);
         }
 
+        /// <summary>
+        /// Creates a newly created tasq
+        /// </summary>
+        /// <param name="tasq"></param>
+        /// <returns>A newly created tasq</returns>
+        /// <response code="201">Returns the newly created item</response>
+        /// <response code="400">If the item is null</response>
+        /// <response code="422">If the model is invalid</response>
         [HttpPost(Name = "CreateTasq")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateTasq([FromBody]TasqForCreationDto tasq)

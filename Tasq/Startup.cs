@@ -61,6 +61,7 @@ namespace Tasq
             services.ConfigureIdentity();
             services.ConfigureJWT(Configuration);
             services.AddScoped<IAuthenticationManager, AuthenticationManager>();
+            services.ConfigureSwagger();
 
             services.Configure<ApiBehaviorOptions>(options =>
             {
@@ -105,6 +106,14 @@ namespace Tasq
             app.UseHttpCacheHeaders();
 
             app.UseIpRateLimiting();
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(s =>
+           {
+               s.SwaggerEndpoint("/swagger/v1/swagger.json", "Tasq API v1");
+               s.SwaggerEndpoint("/swagger/v2/swagger.Json", "Tasq API v2");
+           });
 
             app.UseRouting();
 

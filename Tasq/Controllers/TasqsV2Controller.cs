@@ -12,6 +12,7 @@ namespace Tasq.Controllers
 {
     [Route("api/tasqs")]
     [ApiController]
+    [ApiExplorerSettings(GroupName = "v2")]
     public class TasqsV2Controller : ControllerBase
     {
         private readonly IRepositoryManager _repository;
