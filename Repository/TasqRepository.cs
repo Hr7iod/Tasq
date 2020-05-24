@@ -24,8 +24,10 @@ namespace Repository
             var tasqs = await FindAll(trackChanges)
             .FilterTasq(tasqParameters.MinProgress, tasqParameters.MaxProgress)
             .SearchName(tasqParameters.SearchName)
+            .SearchParent(tasqParameters.SearchParent)
             .Sort(tasqParameters.OrderBy)
             .ToListAsync();
+
 
             return PagedList<Tasq>.ToPagedList(tasqs, tasqParameters.PageNumber, tasqParameters.PageSize);
         }
@@ -39,6 +41,7 @@ namespace Repository
             var children = await FindByCondition(t => t.ParentId.Equals(tasqId), trackChanges)
                 .FilterTasq(tasqParameters.MinProgress, tasqParameters.MaxProgress)
                 .SearchName(tasqParameters.SearchName)
+                .SearchParent(tasqParameters.SearchParent)
                 .Sort(tasqParameters.OrderBy)
                 .ToListAsync();
 

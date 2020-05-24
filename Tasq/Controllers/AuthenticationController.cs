@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Tasq.ActionFilters;
 
@@ -62,7 +63,12 @@ namespace Tasq.Controllers
                 return Unauthorized();
             }
 
-            return Ok(new { Token = await _authManager.CreateToken() });
+            var claims = await _authManager.GetClaimsList(user);
+
+            return Ok(new { Token = await _authManager.CreateToken(),
+                            Name = claims[0],
+                            Email = claims[1]
+            });
         }
     }
 }

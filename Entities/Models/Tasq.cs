@@ -20,6 +20,16 @@ namespace Entities.Models
         [MaxLength(100, ErrorMessage = "Percent completed can't be greater than 100")]
         public int Progress { get; set; }
 
+        public string Status { get; set; }
+
+        public string Author { get; set; }
+
+        public string AppointedTo { get; set; }
+
+        public DateTime createDate { get; set; }
+
+        public DateTime dueDate { get; set; }
+
         public ICollection<Tasq> Children { get; set; }
 
         [ForeignKey(nameof(Tasq))]

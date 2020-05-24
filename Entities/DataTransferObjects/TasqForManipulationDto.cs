@@ -16,6 +16,16 @@ namespace Entities.DataTransferObjects
 
         public Guid? ParentId { get; set; }
 
+        public string Status { get; set; }
+
+        public string Author { get; set; }
+
+        public string AppointedTo { get; set; }
+
+        public DateTime createDate { get; set; }
+
+        public DateTime dueDate { get; set; }
+
         public IEnumerable<TasqForCreationDto> Children { get; set; }
     }
 }

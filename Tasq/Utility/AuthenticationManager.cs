@@ -34,6 +34,19 @@ namespace Tasq.Utility
             return (_user != null && await _userManager.CheckPasswordAsync(_user, userForAuth.Password));
         }
 
+        public async Task<List<string>> GetClaimsList(UserForAuthenticationDto userForAuth)
+        {
+            _user = await _userManager.FindByNameAsync(userForAuth.UserName);
+
+            var claims = new List<string>
+            {
+                _user.UserName,
+                _user.Email
+            };
+
+            return claims;
+        }
+
         public async Task<string> CreateToken()
         {
             var signingCredentials = GetSigningCredentials();

@@ -63,9 +63,9 @@ namespace Tasq.Controllers
             return links.HasLinks ? Ok(links.LinkedEntities) : Ok(links.ShapedEntities);
         }
 
-        [HttpGet("{id}", Name = "GetTasq")]
-        [HttpCacheExpiration(CacheLocation = CacheLocation.Public, MaxAge = 60)]
-        [HttpCacheValidation(MustRevalidate = false)]
+        [HttpGet("{id}", Name = "GetTasq"), Authorize(Roles = "Manager")]
+        //[HttpCacheExpiration(CacheLocation = CacheLocation.Public, MaxAge = 60)]
+        //[HttpCacheValidation(MustRevalidate = false)]
         [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
         public async Task<IActionResult> GetTasq(Guid id)
         {
@@ -82,7 +82,7 @@ namespace Tasq.Controllers
             }
         }
 
-        [HttpGet("{tasqId}/children")]
+        [HttpGet("{tasqId}/children"), Authorize(Roles = "Manager")]
         [HttpHead("{tasqId}/children")]
         [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
         public async Task<IActionResult> GetChildrenForTasq(Guid tasqId, [FromQuery]TasqParameters tasqParameters)
@@ -108,7 +108,7 @@ namespace Tasq.Controllers
             return links.HasLinks ? Ok(links.LinkedEntities) : Ok(links.ShapedEntities);
         }
 
-        [HttpGet("{tasqId}/children/{childId}", Name = "GetChildForTasq")]
+        [HttpGet("{tasqId}/children/{childId}", Name = "GetChildForTasq"), Authorize(Roles = "Manager")]
         [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
         public async Task<IActionResult> GetChildForTasq(Guid tasqId, Guid childId)
         {
@@ -138,7 +138,7 @@ namespace Tasq.Controllers
         /// <response code="201">Returns the newly created item</response>
         /// <response code="400">If the item is null</response>
         /// <response code="422">If the model is invalid</response>
-        [HttpPost(Name = "CreateTasq")]
+        [HttpPost(Name = "CreateTasq"), Authorize(Roles = "Manager")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateTasq([FromBody]TasqForCreationDto tasq)
         {
@@ -152,7 +152,7 @@ namespace Tasq.Controllers
             return CreatedAtRoute("GetTasq", new { id = tasqToReturn.Id }, tasqToReturn);
         }
 
-        [HttpPost("{tasqId}/children")]
+        [HttpPost("{tasqId}/children"), Authorize(Roles = "Manager")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateChildTasq(Guid tasqId, [FromBody]TasqForCreationDto childTasq)
         {
@@ -167,7 +167,7 @@ namespace Tasq.Controllers
             return CreatedAtRoute("GetChildForTasq", new { tasqId, childId = tasqToReturn.Id }, tasqToReturn);
         }
 
-        [HttpGet("collection/({ids})", Name = "TasqCollection")]
+        [HttpGet("collection/({ids})", Name = "TasqCollection"), Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetTasqCollection([ModelBinder(BinderType = typeof(ArrayModelBinder))]IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -188,7 +188,7 @@ namespace Tasq.Controllers
             return Ok(tasqToReturn);
         }
 
-        [HttpPost("collection")]
+        [HttpPost("collection"), Authorize(Roles = "Manager")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateTasqCollection([FromBody]IEnumerable<TasqForCreationDto> tasqCollection)
         {
@@ -206,7 +206,7 @@ namespace Tasq.Controllers
             return CreatedAtRoute("TasqCollection", new { ids }, tasqCollectionToReturn);
         }
 
-        [HttpDelete("{tasqId}/children/{childId}")]
+        [HttpDelete("{tasqId}/children/{childId}"), Authorize(Roles = "Manager")]
         [ServiceFilter(typeof(ValidateChildTasqExistsAttribute))]
         public async Task<IActionResult> DeleteChildTasq(Guid tasqId, Guid childId)
         {
@@ -218,7 +218,7 @@ namespace Tasq.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize(Roles = "Manager")]
         [ServiceFilter(typeof(ValidateTasqExistsAttribute))]
         public async Task<IActionResult> DeleteTasq(Guid id)
         {
@@ -237,7 +237,7 @@ namespace Tasq.Controllers
             return NoContent();
         }
 
-        [HttpPut("{tasqId}/children/{childId}")]
+        [HttpPut("{tasqId}/children/{childId}"), Authorize(Roles = "Manager")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         [ServiceFilter(typeof(ValidateChildTasqExistsAttribute))]
         public async Task<IActionResult> UpdateChildTasq(Guid tasqId, Guid childId, [FromBody]TasqForUpdateDto tasq)
@@ -250,7 +250,7 @@ namespace Tasq.Controllers
             return NoContent();
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}"), Authorize(Roles = "Manager")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         [ServiceFilter(typeof(ValidateTasqExistsAttribute))]
         public async Task<IActionResult> UpdateTasq(Guid id, [FromBody]TasqForUpdateDto tasq)
@@ -263,7 +263,7 @@ namespace Tasq.Controllers
             return NoContent();
         }
 
-        [HttpPatch("{tasqId}/children/{childId}")]
+        [HttpPatch("{tasqId}/children/{childId}"), Authorize(Roles = "Manager")]
         [ServiceFilter(typeof(ValidateChildTasqExistsAttribute))]
         public async Task<IActionResult> PartiallyUpdateChildTasq(Guid tasqId, Guid childId, [FromBody]JsonPatchDocument<TasqForUpdateDto> patchDoc)
         {
@@ -286,7 +286,7 @@ namespace Tasq.Controllers
             return NoContent();
         }
 
-        [HttpPatch("{id}")]
+        [HttpPatch("{id}"), Authorize(Roles = "Manager")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         [ServiceFilter(typeof(ValidateTasqExistsAttribute))]
         public async Task<IActionResult> PatriallyUpdateTasq(Guid id, [FromBody]JsonPatchDocument<TasqForUpdateDto> patchDoc)

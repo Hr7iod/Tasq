@@ -35,7 +35,8 @@ namespace Tasq.Extensions
                 options.AddPolicy("CorsPolicy", builder =>
                     builder.AllowAnyOrigin()
                     .AllowAnyMethod()
-                    .AllowAnyHeader());
+                    .AllowAnyHeader()
+                    .WithExposedHeaders("X-Pagination"));
             });
 
         public static void ConfigureIISIntegration(this IServiceCollection services) =>
@@ -93,7 +94,7 @@ namespace Tasq.Extensions
             });
         }
 
-        public static void ConfigureResponseCaching(this IServiceCollection services) => 
+        /*public static void ConfigureResponseCaching(this IServiceCollection services) => 
             services.AddResponseCaching();
 
         public static void ConfigureHttpCacheHeaders(this IServiceCollection services) =>
@@ -106,7 +107,7 @@ namespace Tasq.Extensions
                 (validationOpt) =>
                 {
                     validationOpt.MustRevalidate = true;
-                });
+                });*/
 
         public static void ConfigureRateLimitinOptions(this IServiceCollection services)
         {
@@ -115,7 +116,7 @@ namespace Tasq.Extensions
                 new RateLimitRule
                 {
                     Endpoint = "*",
-                    Limit = 50,
+                    Limit = 150,
                     Period = "5m"
                 }
             };
@@ -134,7 +135,7 @@ namespace Tasq.Extensions
         {
             var builder = services.AddIdentityCore<User>(o =>
             {
-                o.Password.RequireDigit = true;
+                o.Password.RequireDigit = false;
                 o.Password.RequireLowercase = false;
                 o.Password.RequireUppercase = false;
                 o.Password.RequireNonAlphanumeric = false;

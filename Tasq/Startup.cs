@@ -52,8 +52,8 @@ namespace Tasq
             services.AddScoped<TasqLinks>();
             services.AddScoped<ChildTasqLinks>();
             services.ConfigureVersioning();
-            services.ConfigureResponseCaching();
-            services.ConfigureHttpCacheHeaders();
+            //services.ConfigureResponseCaching();
+            //services.ConfigureHttpCacheHeaders();
             services.AddMemoryCache();
             services.ConfigureRateLimitinOptions();
             services.AddHttpContextAccessor();
@@ -72,7 +72,7 @@ namespace Tasq
             {
                 config.RespectBrowserAcceptHeader = true;
                 config.ReturnHttpNotAcceptable = true;
-                config.CacheProfiles.Add("120SecondsDuration", new CacheProfile { Duration = 120 });
+                //config.CacheProfiles.Add("120SecondsDuration", new CacheProfile { Duration = 120 });
             }).AddNewtonsoftJson()
             .AddXmlDataContractSerializerFormatters()
             .AddCustomCSVFormatter();
@@ -101,9 +101,9 @@ namespace Tasq
                 ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.All
             });
 
-            app.UseResponseCaching();
+            //app.UseResponseCaching();
 
-            app.UseHttpCacheHeaders();
+            //app.UseHttpCacheHeaders();
 
             app.UseIpRateLimiting();
 

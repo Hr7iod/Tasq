@@ -23,6 +23,19 @@ namespace Repository.Extensions
             return tasqs.Where(t => t.Name.ToLower().Contains(lowerCaseName));
         }
 
+        public static IQueryable<Tasq> SearchParent(this IQueryable<Tasq> tasqs, string searchParent)
+        {
+            if (string.IsNullOrWhiteSpace(searchParent))
+                return tasqs;
+
+            if (searchParent == "root")
+                return tasqs.Where(t => t.ParentId == null);
+
+            var lowerCaseParentId = searchParent.Trim().ToLower();
+
+            return tasqs.Where(t => t.ParentId.ToString().ToLower() == lowerCaseParentId);
+        }
+
         public static IQueryable<Tasq> Sort(this IQueryable<Tasq> tasqs, string orderByQueryString)
         {
             if (string.IsNullOrWhiteSpace(orderByQueryString))
